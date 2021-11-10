@@ -3,5 +3,5 @@
  *  Copyright 2021 Sue Lin
  */
 
-public class ErrorPopUp {
+public class EditPopUp {
 }
