@@ -3,6 +3,12 @@
  *  Copyright 2021 Sue Lin
  */
 
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.JSONObject;
+
 public class ExportFileFormats {
     //export the inventory as an HTML file, end with .html
     void exportHTML(){
@@ -13,6 +19,8 @@ public class ExportFileFormats {
 
     //export the inventory as a JSON file, end with .json
     void exportJSON(){
+        JSONObject obj = new JSONObject();
+
         //while table is not empty, print out to json file
         //close file/writer
     }

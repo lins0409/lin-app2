@@ -30,16 +30,16 @@ public class EditPopUp implements Initializable {
     @FXML
     private Button updateButton;
 
-    public EditPopUp(String itemNum, String itemName, double itemVal){
-        editSerialNumber.setText(itemNum);
-        editItemName.setText(itemName);
-        editMoneyValue.setText(String.valueOf(itemVal));
-    }
+    private String itemNum;
+    private String itemName;
+    private double itemVal;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //display text of selected item on table but in the textfields
-
+        editSerialNumber.setText(itemNum);
+        editItemName.setText(itemName);
+        editMoneyValue.setText(String.valueOf(itemVal));
         //make it so that they can be changed
     }
 

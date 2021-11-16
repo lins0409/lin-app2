@@ -3,6 +3,11 @@
  *  Copyright 2021 Sue Lin
  */
 
+import java.io.*;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -15,13 +20,13 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.json.simple.parser.ParseException;
 
-import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.*;
-import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 public class ApplicationController implements Initializable {
 
@@ -34,6 +39,7 @@ public class ApplicationController implements Initializable {
     private  boolean searchFilter(InventoryItems item, String searchText){
         return ((item.getSerialNum().toLowerCase().contains(searchText.toLowerCase(Locale.ROOT))) || (item.getItemName().toLowerCase(Locale.ROOT).contains(searchText.toLowerCase(Locale.ROOT))));
     }
+    //create a filtered list that updates as the search box gets more characters
     private ObservableList<InventoryItems> filteredList(List<InventoryItems> list, String searchText){
         List<InventoryItems> filterList = new ArrayList<>();
         for (InventoryItems items : list){
@@ -96,20 +102,34 @@ public class ApplicationController implements Initializable {
     @FXML
     void addItem() {
         boolean serialClear = true, nameClear = true, valueClear = true;
+        //regex pattern to ensure that the pattern of the serial number is following the correct format
+        String pattern = "[a-zA-Z]-[a-zA-Z0-9]{3}-[a-zA-Z0-9]{3}-[a-zA-Z0-9]{3}";
 
         //create new instance of InventoryItems, make it get the stuff in the text field
         InventoryItems items = new InventoryItems(serialNumber.getText(), itemName.getText(), Double.parseDouble(moneyValue.getText()));
-
         //set a temp value to the new value for comparing
         String tempItem = serialNumber.getText();
         //if the entered value matches up with a previous value on the chart make an error message pop up
-
+        if(!Pattern.matches(pattern, tempItem)){
+            try {
+                Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("SerialInvalidFormatErrorPopUp.fxml")));
+                Stage stage = new Stage();
+                stage.setTitle("Error");
+                stage.setScene(new Scene(parent));
+                stage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //set to false so item won't be added to table so user can go back and fix it
+            serialClear = false;
+        }
+        //compares the serial number to the rest of the serial numbers in the table
         //if the name of the item isn't long enough or if empty, make error message pop up
         if((itemName.getText().length() < 2) || (itemName.getText() == null)){
             try {
                 Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("NameErrorPopUp.fxml")));
                 Stage stage = new Stage();
-                stage.setTitle("Modify Item");
+                stage.setTitle("Error");
                 stage.setScene(new Scene(parent));
                 stage.show();
             } catch (IOException e) {
@@ -123,7 +143,7 @@ public class ApplicationController implements Initializable {
             try {
                 Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MoneyErrorPopUp.fxml")));
                 Stage stage = new Stage();
-                stage.setTitle("Modify Item");
+                stage.setTitle("Error");
                 stage.setScene(new Scene(parent));
                 stage.show();
             } catch (IOException e) {
@@ -159,15 +179,9 @@ public class ApplicationController implements Initializable {
     }
 
     //edit item in table
+    //error regarding the controller, figure out how to display information from table on it
     @FXML
-    void editItem(ActionEvent event) {
-        //grab the index of the selected element in the table
-        //int items = inventoryTable.getSelectionModel().getSelectedIndex();
-
-        //send the items over
-        //EditPopUp editPopUp = new EditPopUp(inventoryItemsObservableList.get(items).getSerialNum(), inventoryItemsObservableList.get(items).getItemName(), inventoryItemsObservableList.get(items).getItemValue());
-
-        //load up the edit stage
+    void editItem() {
         try {
             Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("EditPopUp.fxml")));
             Stage stage = new Stage();
@@ -182,14 +196,47 @@ public class ApplicationController implements Initializable {
     //open a pre-made file
     @FXML
     void loadFile(ActionEvent event){
+        FileChooser fc = new FileChooser();
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("HTML file", "*.html"));
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON file", "*.json"));
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("TSV file", "*.tsv"));
+        List <File> f = (List<File>) fc.showOpenDialog(null);
+    }
 
+    void openJson(){
+        JSONParser parser = new JSONParser();
+        try {
+            Object object = parser.parse((new FileReader("")));
+            Object obj = null;
+            JSONObject jsonObject = (JSONObject) obj;
+            String number = (String) jsonObject.get("serial number");
+            String name = (String) jsonObject.get("item name");
+            String value = (String) jsonObject.get("item value");
+
+            //loop array
+            JSONArray itemsArray = (JSONArray) jsonObject.get("inventory");
+
+        } catch (FileNotFoundException e){
+            e.printStackTrace();
+        } catch (IOException e){
+            e.printStackTrace();
+        } catch (ParseException e){
+            e.printStackTrace();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     //create a new file
     @FXML
     void saveFile(ActionEvent event){
         //make an instance of FileChooser
+        FileChooser fc = new FileChooser();
+        File file = fc.showSaveDialog(new Stage());
         //call functions to export the items in different formats
+        if (file != null){
+
+        }
     }
 
     //clear the gui
@@ -199,13 +246,6 @@ public class ApplicationController implements Initializable {
         serialNumber.clear();
         itemName.clear();
         moneyValue.clear();
-    }
-
-    //search filter
-    //do not need to test since this updates the gui
-    @FXML
-    void search(ActionEvent event) {
-
     }
 }
 

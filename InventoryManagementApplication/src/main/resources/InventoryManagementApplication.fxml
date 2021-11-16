@@ -61,7 +61,7 @@
                   <Font name="Arial Black" size="14.0" />
                </font>
             </Label>
-            <TextField fx:id="searchBox" layoutX="634.0" layoutY="20.0" onAction="#search" prefHeight="26.0" prefWidth="219.0" promptText="search by...." />
+            <TextField fx:id="searchBox" layoutX="634.0" layoutY="20.0" prefHeight="26.0" prefWidth="219.0" promptText="search by...." />
          </children>
       </AnchorPane>
    </children>
