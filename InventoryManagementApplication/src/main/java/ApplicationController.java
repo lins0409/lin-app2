@@ -5,6 +5,10 @@
 
 import java.io.*;
 
+import javafx.scene.Node;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.util.converter.DoubleStringConverter;
+import javafx.util.converter.IntegerStringConverter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -23,7 +27,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.json.simple.parser.ParseException;
+import javafx.fxml.FXMLLoader;
 
+import javax.imageio.IIOParam;
 import java.net.URL;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -94,8 +100,9 @@ public class ApplicationController implements Initializable {
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("itemName"));
         valueColumn.setCellValueFactory(new PropertyValueFactory<>("itemValue"));
 
-        //set table to true so that it can be edited
-        inventoryTable.setEditable(true);
+        serialColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        nameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        valueColumn.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
     }
 
     //add items from text field into the chart
@@ -182,25 +189,100 @@ public class ApplicationController implements Initializable {
     //error regarding the controller, figure out how to display information from table on it
     @FXML
     void editItem() {
-        try {
-            Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("EditPopUp.fxml")));
-            Stage stage = new Stage();
-            stage.setTitle("Modify Item");
-            stage.setScene(new Scene(parent));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
+        //set table to true so that it can be edited
+        inventoryTable.setEditable(true);
+    }
+
+    //on double click after the modify button has been pressed.
+    @FXML
+    void editName(TableColumn.CellEditEvent editCell) {
+        boolean validInput = true;
+        InventoryItems items = inventoryTable.getSelectionModel().getSelectedItem();
+        if((editCell.getNewValue().toString().length() < 2) || (editCell.getNewValue().toString() == null)){
+            try {
+                Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("NameErrorPopUp.fxml")));
+                Stage stage = new Stage();
+                stage.setTitle("Error");
+                stage.setScene(new Scene(parent));
+                stage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            validInput = false;
+        }
+        //if there are no issues encountered
+        if (validInput){
+            //update table with new value
+            items.setItemName(editCell.getNewValue().toString());
+        }
+    }
+
+    //edit the serial value
+    @FXML
+    void editSerial(TableColumn.CellEditEvent editCell) {
+        boolean validInput = true;
+        String pattern = "[a-zA-Z]-[a-zA-Z0-9]{3}-[a-zA-Z0-9]{3}-[a-zA-Z0-9]{3}";
+        InventoryItems items = inventoryTable.getSelectionModel().getSelectedItem();
+
+        if((!Pattern.matches(pattern, editCell.getNewValue().toString()))){
+            try {
+                Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("SerialInvalidFormatErrorPopUp.fxml")));
+                Stage stage = new Stage();
+                stage.setTitle("Error");
+                stage.setScene(new Scene(parent));
+                stage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            validInput = false;
+        }
+        if (validInput){
+            //update the old value with the new value
+            items.setSerialNum(editCell.getNewValue().toString());
+        }
+    }
+
+    //when you double-click the value cell after you press the modify button
+    @FXML
+    void editVal(TableColumn.CellEditEvent editCell) {
+        //flag for error message
+        boolean validInput = true;
+
+        InventoryItems items = inventoryTable.getSelectionModel().getSelectedItem();
+        //check to make sure that value is valid
+        if(Double.parseDouble(editCell.getNewValue().toString()) < 0){
+            try {
+                Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MoneyErrorPopUp.fxml")));
+                Stage stage = new Stage();
+                stage.setTitle("Error");
+                stage.setScene(new Scene(parent));
+                stage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //set bool to false so item won't be added to table
+            validInput = false;
+        }
+        //if there are no problems with the value
+        if (validInput) {
+            items.setItemValue(Double.parseDouble(editCell.getNewValue().toString()));
         }
     }
 
     //open a pre-made file
     @FXML
-    void loadFile(ActionEvent event){
+    void loadFile(){
         FileChooser fc = new FileChooser();
+        //add the type of files the user can export the data as
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("HTML file", "*.html"));
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON file", "*.json"));
-        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("TSV file", "*.tsv"));
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("TSV file", "*.txt"));
         List <File> f = (List<File>) fc.showOpenDialog(null);
+
+        //if the selected file isn't null
+        if(f != null){
+
+        }
     }
 
     void openJson(){
@@ -232,11 +314,25 @@ public class ApplicationController implements Initializable {
     void saveFile(ActionEvent event){
         //make an instance of FileChooser
         FileChooser fc = new FileChooser();
-        File file = fc.showSaveDialog(new Stage());
+        //add extensions for valid file formats the user can save to
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("HTML file", "*.html"));
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON file", "*.json"));
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("TSV file", "*.txt"));
+
+        //open new stage for saving
+        File newFile = fc.showSaveDialog(new Stage());
         //call functions to export the items in different formats
-        if (file != null){
+        if(newFile != null){
 
         }
+
+    }
+
+    //set the values on the table
+    @FXML
+    void setTable(ActionEvent event) {
+        //make the table uneditable
+        inventoryTable.setEditable(false);
     }
 
     //clear the gui

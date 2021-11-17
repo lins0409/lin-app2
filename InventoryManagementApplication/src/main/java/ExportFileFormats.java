@@ -3,8 +3,12 @@
  *  Copyright 2021 Sue Lin
  */
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.PrintWriter;
+
+import javafx.collections.ObservableList;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONObject;
@@ -26,8 +30,10 @@ public class ExportFileFormats {
     }
 
     //export the inventory as a TSV file, end with .txt
-    void exportTSV(){
+    void exportTSV(File file) throws FileNotFoundException {
         //print out the initial formatting of the table; number, name, value
+        PrintWriter out = new PrintWriter(file);
+        StringBuilder formatedData = new StringBuilder();
         //for each row on the table while it does not equal null
             //print it out (array val 0-2)
             //separate the items with tab

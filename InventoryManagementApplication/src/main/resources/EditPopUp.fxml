@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="272.0" prefWidth="430.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="EditPopUp">
+<AnchorPane prefHeight="272.0" prefWidth="430.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="EditPopUpController">
    <children>
       <Label alignment="CENTER" contentDisplay="CENTER" layoutX="32.0" layoutY="58.0" prefHeight="29.0" prefWidth="170.0" text="Serial Number:" textAlignment="CENTER">
          <font>
