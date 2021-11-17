@@ -1,5 +1,5 @@
 # lin-app2
-![Screenshot of application](https://puu.sh/IpIca/8b3170b31c.png)
+![Screenshot of application](https://github.com/lins0409/lin-app2/blob/main/InventoryManagementApplication/docs/gui_screenshot.png)
 This application's intended purpose is to allow the user to track their personal inventory. It allows for the user to store a minimum of 1024 items. The user is required to enter a serial number, the item name, and the monetary value in order to add the item to the list. Serial numbers must be written in the format A-XXX-XXX-XXX, where A is a letter and X could be a number or a letter.
 * To load a file:
    * Click on the "Load" button
