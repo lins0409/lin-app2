@@ -3,15 +3,6 @@
  *  Copyright 2021 Sue Lin
  */
 
-import java.io.*;
-
-import javafx.scene.Node;
-import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.util.converter.DoubleStringConverter;
-import javafx.util.converter.IntegerStringConverter;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -21,15 +12,23 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.converter.DoubleStringConverter;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import javafx.fxml.FXMLLoader;
 
-import javax.imageio.IIOParam;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -100,6 +99,7 @@ public class ApplicationController implements Initializable {
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("itemName"));
         valueColumn.setCellValueFactory(new PropertyValueFactory<>("itemValue"));
 
+        //need this part in order to make the column editable
         serialColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         nameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         valueColumn.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
@@ -117,6 +117,8 @@ public class ApplicationController implements Initializable {
         //set a temp value to the new value for comparing
         String tempItem = serialNumber.getText();
         //if the entered value matches up with a previous value on the chart make an error message pop up
+
+        //if the serial number does not match with the pattern A-XXX-XXX-XXX throw an error message
         if(!Pattern.matches(pattern, tempItem)){
             try {
                 Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("SerialInvalidFormatErrorPopUp.fxml")));
@@ -195,9 +197,12 @@ public class ApplicationController implements Initializable {
 
     //on double click after the modify button has been pressed.
     @FXML
-    void editName(TableColumn.CellEditEvent editCell) {
+    void editName(CellEditEvent editCell) {
+        //flag
         boolean validInput = true;
         InventoryItems items = inventoryTable.getSelectionModel().getSelectedItem();
+
+        //check to make sure that the new value is valid
         if((editCell.getNewValue().toString().length() < 2) || (editCell.getNewValue().toString() == null)){
             try {
                 Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("NameErrorPopUp.fxml")));
@@ -219,11 +224,12 @@ public class ApplicationController implements Initializable {
 
     //edit the serial value
     @FXML
-    void editSerial(TableColumn.CellEditEvent editCell) {
+    void editSerial(CellEditEvent editCell) {
+        //flag
         boolean validInput = true;
         String pattern = "[a-zA-Z]-[a-zA-Z0-9]{3}-[a-zA-Z0-9]{3}-[a-zA-Z0-9]{3}";
         InventoryItems items = inventoryTable.getSelectionModel().getSelectedItem();
-
+        //checks to make sure that the serial number is in the format of the pattern
         if((!Pattern.matches(pattern, editCell.getNewValue().toString()))){
             try {
                 Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("SerialInvalidFormatErrorPopUp.fxml")));
@@ -236,6 +242,7 @@ public class ApplicationController implements Initializable {
             }
             validInput = false;
         }
+        //if no problems
         if (validInput){
             //update the old value with the new value
             items.setSerialNum(editCell.getNewValue().toString());
@@ -244,7 +251,7 @@ public class ApplicationController implements Initializable {
 
     //when you double-click the value cell after you press the modify button
     @FXML
-    void editVal(TableColumn.CellEditEvent editCell) {
+    void editVal(CellEditEvent editCell) {
         //flag for error message
         boolean validInput = true;
 
@@ -282,30 +289,6 @@ public class ApplicationController implements Initializable {
         //if the selected file isn't null
         if(f != null){
 
-        }
-    }
-
-    void openJson(){
-        JSONParser parser = new JSONParser();
-        try {
-            Object object = parser.parse((new FileReader("")));
-            Object obj = null;
-            JSONObject jsonObject = (JSONObject) obj;
-            String number = (String) jsonObject.get("serial number");
-            String name = (String) jsonObject.get("item name");
-            String value = (String) jsonObject.get("item value");
-
-            //loop array
-            JSONArray itemsArray = (JSONArray) jsonObject.get("inventory");
-
-        } catch (FileNotFoundException e){
-            e.printStackTrace();
-        } catch (IOException e){
-            e.printStackTrace();
-        } catch (ParseException e){
-            e.printStackTrace();
-        } catch (Exception e){
-            e.printStackTrace();
         }
     }
 
