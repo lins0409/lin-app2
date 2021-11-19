@@ -24,6 +24,7 @@ public class NameErrorController implements Initializable {
     private Button okButton;
 
     //button to close the popup
+    //no test made for it since it just closes the window
     @FXML
     void closeErrorMessage() {
         Stage stage = (Stage) okButton.getScene().getWindow();

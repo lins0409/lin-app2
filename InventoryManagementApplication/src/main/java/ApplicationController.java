@@ -108,6 +108,7 @@ public class ApplicationController implements Initializable {
     //add items from text field into the chart
     @FXML
     void addItem() {
+        //flags
         boolean serialClear = true, nameClear = true, valueClear = true;
         //regex pattern to ensure that the pattern of the serial number is following the correct format
         String pattern = "[a-zA-Z]-[a-zA-Z0-9]{3}-[a-zA-Z0-9]{3}-[a-zA-Z0-9]{3}";
@@ -117,7 +118,23 @@ public class ApplicationController implements Initializable {
         //set a temp value to the new value for comparing
         String tempItem = serialNumber.getText();
         //if the entered value matches up with a previous value on the chart make an error message pop up
-
+        for (int i = 0; i < inventoryItemsObservableList.size(); i++){
+            for(int j = i; j < inventoryItemsObservableList.size(); j ++){
+                if(tempItem.equals(inventoryItemsObservableList.get(j).getSerialNum())){
+                    try {
+                        Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("SerialDuplicateErrorPopUp.fxml")));
+                        Stage stage = new Stage();
+                        stage.setTitle("Error");
+                        stage.setScene(new Scene(parent));
+                        stage.show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    //set to false so item won't be added to table so user can go back and fix it
+                    serialClear = false;
+                }
+            }
+        }
         //if the serial number does not match with the pattern A-XXX-XXX-XXX throw an error message
         if(!Pattern.matches(pattern, tempItem)){
             try {
@@ -227,8 +244,30 @@ public class ApplicationController implements Initializable {
     void editSerial(CellEditEvent editCell) {
         //flag
         boolean validInput = true;
+        //regex pattern for comparison
         String pattern = "[a-zA-Z]-[a-zA-Z0-9]{3}-[a-zA-Z0-9]{3}-[a-zA-Z0-9]{3}";
         InventoryItems items = inventoryTable.getSelectionModel().getSelectedItem();
+        //set the new input to a new string to be compared
+        String tempItem = editCell.getNewValue().toString();
+
+        //if the entered value matches up with a previous value on the chart make an error message pop up
+        for (int i = 0; i < inventoryItemsObservableList.size(); i++){
+            for(int j = i; j < inventoryItemsObservableList.size(); j ++){
+                if(tempItem.equals(inventoryItemsObservableList.get(j).getSerialNum())){
+                    try {
+                        Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("SerialDuplicateErrorPopUp.fxml")));
+                        Stage stage = new Stage();
+                        stage.setTitle("Error");
+                        stage.setScene(new Scene(parent));
+                        stage.show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    //set to false so item won't be added to table so user can go back and fix it
+                    validInput = false;
+                }
+            }
+        }
         //checks to make sure that the serial number is in the format of the pattern
         if((!Pattern.matches(pattern, editCell.getNewValue().toString()))){
             try {
@@ -279,22 +318,47 @@ public class ApplicationController implements Initializable {
     //open a pre-made file
     @FXML
     void loadFile(){
+        //clear the values from the current list
+        inventoryItemsObservableList.clear();
+
         FileChooser fc = new FileChooser();
         //add the type of files the user can export the data as
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("HTML file", "*.html"));
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON file", "*.json"));
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("TSV file", "*.txt"));
-        List <File> f = (List<File>) fc.showOpenDialog(null);
+        //set the file to whatever the user chooses to open
+        File f = fc.showOpenDialog(new Stage());
 
         //if the selected file isn't null
         if(f != null){
-
+            ImportFile imp = new ImportFile();
+            //checking to see what type of file extension the user wants to open
+            String extension = " ";
+            String fileName = f.toString();
+            //returns the last occurrence of .
+            int index = fileName.lastIndexOf('.');
+            if (index > 0){
+                //returns the value after the ',', so the extension type
+                extension = fileName.substring(index + 1);
+            }
+            //now that the file extension is found, if it's txt
+            if(extension.equals("txt")){
+                imp.openTSV(f);
+            }
+            //if it's html
+            if(extension.equals("html")){
+                imp.openHTML(f);
+            }
+            //if it's json
+            if(extension.equals(".json")){
+                imp.openJson(f);
+            }
         }
     }
 
     //create a new file
     @FXML
-    void saveFile(ActionEvent event){
+    void saveFile() throws IOException {
         //make an instance of FileChooser
         FileChooser fc = new FileChooser();
         //add extensions for valid file formats the user can save to
@@ -302,18 +366,39 @@ public class ApplicationController implements Initializable {
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON file", "*.json"));
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("TSV file", "*.txt"));
 
-        //open new stage for saving
+        //whatever and wherever the user decides to save the file as
         File newFile = fc.showSaveDialog(new Stage());
         //call functions to export the items in different formats
         if(newFile != null){
+            ExportFileFormats exp = new ExportFileFormats();
 
+            //checking to see what type of file extension the user used
+            String extension = " ";
+            String fileName = newFile.toString();
+            //returns the last occurrence of .
+            int index = fileName.lastIndexOf('.');
+            if (index > 0){
+                //returns the value after the ',', so the extension type
+                extension = fileName.substring(index + 1);
+            }
+            //now that the file extension is found, if it's txt
+            if(extension.equals("txt")){
+                exp.exportTSV(newFile, inventoryTable.getItems());
+            }
+            //if it's html
+            if(extension.equals("html")){
+                exp.exportHTML(newFile, inventoryTable.getItems());
+            }
+            //if it's json
+            if(extension.equals(".json")){
+                exp.exportJSON(newFile, inventoryTable.getItems());
+            }
         }
-
     }
 
     //set the values on the table
     @FXML
-    void setTable(ActionEvent event) {
+    void setTable() {
         //make the table uneditable
         inventoryTable.setEditable(false);
     }
