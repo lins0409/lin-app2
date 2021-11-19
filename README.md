@@ -3,8 +3,10 @@
 This application's intended purpose is to allow the user to track their personal inventory. It allows for the user to store a minimum of 1024 items. The user is required to enter a serial number, the item name, and the monetary value in order to add the item to the list. Serial numbers must be written in the format A-XXX-XXX-XXX, where A is a letter and X could be a number or a letter.
 * To load a file:
    * Click on the "Load" button
+   * A new window will pop up, allowing for you to choose the location and file that you want to load into the table
 * To save the file:
    * Click on the "Save" button
+   * A new window will open, allowing for you to chose the desired location to save your file, as well as it's name and extension type.
 * To add a new item:
    * Fill in the serial number, item name, and value textboxes.
    * Click the "Add" button located below the textbox for the value.
