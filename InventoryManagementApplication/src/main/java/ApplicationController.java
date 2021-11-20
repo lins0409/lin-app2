@@ -311,7 +311,7 @@ public class ApplicationController implements Initializable {
 
     //open a pre-made file
     @FXML
-    void loadFile(){
+    void loadFile() {
         //clear the values from the current list
         inventoryItemsObservableList.clear();
 

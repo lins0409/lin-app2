@@ -26,11 +26,7 @@ public class ExportFileFormats{
                 """);
         bw.write("</style>\n<body>\n");
         //store in <table> element
-        bw.write("<table>");
-        bw.write("<tr>\n");
-        bw.write("<th>Serial Number</th>\n");
-        bw.write("<th>Name</th>\n");
-        bw.write("<th>Value</th>\n");
+        bw.write("<table><tr>\n<th>Serial Number</th>\n<th>Name</th>\n<th>Value</th>\n");
         bw.write("  </tr>\n");
         for (InventoryItems items : itemsList) {
             bw.write("<tr>\n");
@@ -49,7 +45,6 @@ public class ExportFileFormats{
     }
 
     //export the inventory as a JSON file, end with .json
-    //not working, file won't appear in docs
     void exportJSON(File file, ObservableList <InventoryItems> itemsList){
         //create a JSONObject first
         JSONObject obj = new JSONObject();
@@ -101,6 +96,7 @@ public class ExportFileFormats{
         pass = true;
     }
 
+    //for test cases
     public boolean getResults(){
         return pass;
     }
