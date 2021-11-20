@@ -75,7 +75,8 @@ public class ImportFile {
                 //set temp values to store the items as it goes through the iterator
                 String number = iterator.next().text();
                 String name = iterator.next().text();
-                double val = Double.parseDouble(iterator.next().text());
+                String formattedVal = iterator.next().text().replaceAll("[^\\d.]+", "");
+                double val = Double.parseDouble(formattedVal);
 
                 //add temp variables
                 InventoryItems inventoryItems = new InventoryItems(number, name , val);

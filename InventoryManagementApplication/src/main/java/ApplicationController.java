@@ -317,6 +317,7 @@ public class ApplicationController implements Initializable {
 
         FileChooser fc = new FileChooser();
         //add the type of files the user can export the data as
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("All files", "*.*"));
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("HTML file", "*.html"));
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON file", "*.json"));
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("TSV file", "*.txt"));
@@ -359,6 +360,7 @@ public class ApplicationController implements Initializable {
         //make an instance of FileChooser
         FileChooser fc = new FileChooser();
         //add extensions for valid file formats the user can save to
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("All files", "*.*"));
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("HTML file", "*.html"));
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON file", "*.json"));
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("TSV file", "*.txt"));
