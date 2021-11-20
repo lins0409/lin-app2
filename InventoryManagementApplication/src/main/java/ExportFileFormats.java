@@ -7,62 +7,79 @@ import java.io.*;
 
 import javafx.collections.ObservableList;
 import org.json.simple.JSONArray;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONObject;
 
 public class ExportFileFormats{
+    //for test cases later, to make sure that the functions are passing everything in
+    boolean pass;
 
     //export the inventory as an HTML file, end with .html
     void exportHTML(File file, ObservableList<InventoryItems> itemsList) throws IOException {
-        FileWriter fw = new FileWriter(file);
+        BufferedWriter bw = new BufferedWriter(new FileWriter(file));
 
-        fw.write("<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n");
-        fw.write("</head>\n<body>\n");
+        bw.write("<!DOCTYPE html>\n<html>\n<style>\n");
+        //styling so that I can see the lines of the table when it's open in a web browser
+        bw.write("""
+                table, th, td {
+                \tborder:1px solid black;
+                }
+                """);
+        bw.write("</style>\n<body>\n");
         //store in <table> element
-        fw.write("<table>");
-        fw.write("<tr>\n");
-        fw.write("<th>Serial Number</th>\n");
-        fw.write("<th>Name</th>\n");
-        fw.write("<th>Value</th>\n");
-        fw.write("  </tr>\n");
+        bw.write("<table>");
+        bw.write("<tr>\n");
+        bw.write("<th>Serial Number</th>\n");
+        bw.write("<th>Name</th>\n");
+        bw.write("<th>Value</th>\n");
+        bw.write("  </tr>\n");
         for (InventoryItems items : itemsList) {
-            fw.write("<tr>\n");
-            fw.write("\t<td>" + items.getSerialNum() + "</td>\n");
-            fw.write("\t<td>" + items.getItemName() + "</td>\n");
-            fw.write("\t<td>" + items.getItemValue() + "</td>\n");
-            fw.write("  </tr>\n");
+            bw.write("<tr>\n");
+            bw.write("\t<td>" + items.getSerialNum() + "</td>\n");
+            bw.write("\t<td>" + items.getItemName() + "</td>\n");
+            String doubleFormat = String.format("%.2f", items.getItemValue());
+            bw.write("\t<td>" + "$" + doubleFormat + "</td>\n");
+            bw.write("  </tr>\n");
         }
-        fw.write("</table>\n");
+        bw.write("</table>\n");
         //while the table rows are not empty, print out the elements
-        fw.write("\n</body>\n</html>");
+        bw.write("\n</body>\n</html>");
         //close file/writer
-        fw.close();
+        bw.close();
+        pass = true;
     }
 
     //export the inventory as a JSON file, end with .json
     //not working, file won't appear in docs
     void exportJSON(File file, ObservableList <InventoryItems> itemsList){
+        //create a JSONObject first
         JSONObject obj = new JSONObject();
+        //make an array to store all items
+        JSONArray jsonArray = new JSONArray();
 
-        //while table is not empty,put all of the values into the JSONbject
+        //while table is not empty,put all the values into the JSONObject
         for (InventoryItems items : itemsList){
-            obj.put("Serial number", items.getSerialNum());
-            obj.put("Item name", items.getItemName());
-            obj.put("Item value", items.getItemValue());
+            JSONObject tempObj = new JSONObject();
+            tempObj.put("serialNumber", items.getSerialNum());
+            tempObj.put("itemName", items.getItemName());
+            tempObj.put("itemValue", items.getItemValue());
+            //add to array
+            jsonArray.add(tempObj);
         }
+        //this allows for all the objects to be put in an array for printing
+        obj.put("inventory", jsonArray);
         //print out the file
         try {
-            FileWriter fw = new FileWriter(file);
-            fw.write(obj.toJSONString());
-            //close file/writer
-            fw.close();
+            BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+            bw.write(obj.toJSONString());
+            bw.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        pass = true;
     }
 
     //export the inventory as a TSV file, end with .txt
-    void exportTSV(File file, ObservableList <InventoryItems> itemsList) throws FileNotFoundException {
+    void exportTSV(File file, ObservableList <InventoryItems> itemsList) {
 
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))){
             //print out the initial formatting of the table; number, name, value
@@ -75,10 +92,16 @@ public class ExportFileFormats{
                 String doubleFormat = String.format("%.2f", items.getItemValue());
                 bw.write("\t$" + doubleFormat);
                 bw.newLine();
+                //close file/writer
+                bw.close();
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
+        pass = true;
+    }
+
+    public boolean getResults(){
+        return pass;
     }
 }

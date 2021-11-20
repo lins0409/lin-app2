@@ -1,0 +1,7 @@
+{
+    "inventory" : [
+        {"serialNumber": "A-123-456-789", "itemName": "Tea", "itemValue": 7.77 },
+	{"serialNumber": "S-yTU-7Yh-86R", "itemName": "Picture Frame", "itemValue": 12.99 },
+	{"serialNumber": "F-iuy-98i-00i", "itemName": "headphones", "itemValue": 150.00 }
+    ]
+}

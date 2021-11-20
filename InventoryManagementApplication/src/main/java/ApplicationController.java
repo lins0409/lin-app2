@@ -5,7 +5,6 @@
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -20,14 +19,9 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.converter.DoubleStringConverter;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -344,15 +338,18 @@ public class ApplicationController implements Initializable {
             //now that the file extension is found, if it's txt
             if(extension.equals("txt")){
                 imp.openTSV(f);
+                inventoryTable.setItems(inventoryItemsObservableList);
             }
             //if it's html
             if(extension.equals("html")){
                 imp.openHTML(f);
             }
             //if it's json
-            if(extension.equals(".json")){
+            if(extension.equals("json")){
                 imp.openJson(f);
             }
+            //get the new updated list of items
+            inventoryTable.setItems(imp.getItemsObList());
         }
     }
 
@@ -390,7 +387,7 @@ public class ApplicationController implements Initializable {
                 exp.exportHTML(newFile, inventoryTable.getItems());
             }
             //if it's json
-            if(extension.equals(".json")){
+            if(extension.equals("json")){
                 exp.exportJSON(newFile, inventoryTable.getItems());
             }
         }
