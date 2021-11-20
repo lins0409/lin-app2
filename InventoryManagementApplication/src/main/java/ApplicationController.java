@@ -25,7 +25,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.regex.Pattern;
 
 public class ApplicationController implements Initializable {
 
@@ -103,7 +102,7 @@ public class ApplicationController implements Initializable {
     @FXML
     void addItem() {
         //flags
-        boolean serialClear = true, nameClear = true, valueClear = true;
+        boolean serialClear, nameClear = true, valueClear = true;
 
         //for the serial number partm so this function isn't insanely long
         SerialErrorChecker errorHandler = new SerialErrorChecker();
@@ -157,14 +156,14 @@ public class ApplicationController implements Initializable {
 
     //get rid of all the items in the table
     @FXML
-    void clearTable(){
+    public void clearTable(){
         //clear all
         inventoryTable.getItems().clear();
     }
 
     //get rid of row
     @FXML
-    void deleteItem(){
+    public void deleteItem(){
         //grab index of element in the table that is selected
         int selectedItem = inventoryTable.getSelectionModel().getSelectedIndex();
         //then just remove the selected index
@@ -174,14 +173,14 @@ public class ApplicationController implements Initializable {
     //edit item in table
     //error regarding the controller, figure out how to display information from table on it
     @FXML
-    void editItem() {
+    public void editItem() {
         //set table to true so that it can be edited
         inventoryTable.setEditable(true);
     }
 
     //on double click after the modify button has been pressed.
     @FXML
-    void editName(CellEditEvent editCell) {
+    public void editName(CellEditEvent editCell) {
         //flag
         boolean validInput = true;
         InventoryItems items = inventoryTable.getSelectionModel().getSelectedItem();
@@ -208,9 +207,9 @@ public class ApplicationController implements Initializable {
 
     //edit the serial value
     @FXML
-    void editSerial(CellEditEvent editCell) {
+    public void editSerial(CellEditEvent editCell) {
         //flag
-        boolean validInput = true;
+        boolean validInput;
         //regex pattern for comparison
         InventoryItems items = inventoryTable.getSelectionModel().getSelectedItem();
         //set the new input to a new string to be compared
@@ -228,7 +227,7 @@ public class ApplicationController implements Initializable {
 
     //when you double-click the value cell after you press the modify button
     @FXML
-    void editVal(CellEditEvent editCell) {
+    public void editVal(CellEditEvent editCell) {
         //flag for error message
         boolean validInput = true;
 
@@ -255,7 +254,7 @@ public class ApplicationController implements Initializable {
 
     //open a pre-made file
     @FXML
-    void loadFile() {
+    public void loadFile() {
         //clear the values from the current list
         inventoryItemsObservableList.clear();
 
@@ -302,7 +301,7 @@ public class ApplicationController implements Initializable {
 
     //create a new file
     @FXML
-    void saveFile() throws IOException {
+    public void saveFile() throws IOException {
         //make an instance of FileChooser
         FileChooser fc = new FileChooser();
         //add extensions for valid file formats the user can save to
@@ -343,14 +342,14 @@ public class ApplicationController implements Initializable {
 
     //set the values on the table
     @FXML
-    void setTable() {
+    public void setTable() {
         //make the table uneditable
         inventoryTable.setEditable(false);
     }
 
     //clear the gui
     //no need to test because it is purely an effect for the gui
-    void clearText(){
+    public void clearText(){
         //clear text boxes
         serialNumber.clear();
         itemName.clear();

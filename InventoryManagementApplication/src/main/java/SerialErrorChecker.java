@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 
 public class SerialErrorChecker {
 
-    boolean serialErrors(String tempItem, ObservableList<InventoryItems> inventoryItemsObservableList){
+    public boolean serialErrors(String tempItem, ObservableList<InventoryItems> inventoryItemsObservableList){
         //regex pattern to ensure that the pattern of the serial number is following the correct format
         String pattern = "[a-zA-Z]-[a-zA-Z0-9]{3}-[a-zA-Z0-9]{3}-[a-zA-Z0-9]{3}";
 

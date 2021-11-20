@@ -11,10 +11,10 @@ import org.json.simple.JSONObject;
 
 public class ExportFileFormats{
     //for test cases later, to make sure that the functions are passing everything in
-    boolean pass;
+    public boolean pass;
 
     //export the inventory as an HTML file, end with .html
-    void exportHTML(File file, ObservableList<InventoryItems> itemsList) throws IOException {
+    public void exportHTML(File file, ObservableList<InventoryItems> itemsList) throws IOException {
         BufferedWriter bw = new BufferedWriter(new FileWriter(file));
 
         bw.write("<!DOCTYPE html>\n<html>\n<style>\n");
@@ -45,7 +45,7 @@ public class ExportFileFormats{
     }
 
     //export the inventory as a JSON file, end with .json
-    void exportJSON(File file, ObservableList <InventoryItems> itemsList){
+    public void exportJSON(File file, ObservableList <InventoryItems> itemsList){
         //create a JSONObject first
         JSONObject obj = new JSONObject();
         //make an array to store all items
@@ -74,7 +74,7 @@ public class ExportFileFormats{
     }
 
     //export the inventory as a TSV file, end with .txt
-    void exportTSV(File file, ObservableList <InventoryItems> itemsList) {
+    public void exportTSV(File file, ObservableList <InventoryItems> itemsList) {
 
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))){
             //print out the initial formatting of the table; number, name, value

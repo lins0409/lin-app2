@@ -25,7 +25,7 @@ public class SerialErrorController implements Initializable {
     //button to close the popup
     //no test made for it since it just closes the window
     @FXML
-    void closeErrorMessage() {
+    public void closeErrorMessage() {
         Stage stage = (Stage) okButton.getScene().getWindow();
         //close the stage
         stage.close();

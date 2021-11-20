@@ -20,7 +20,7 @@ public class ImportFile {
     ObservableList <InventoryItems> itemsObList = FXCollections.observableArrayList();
 
     //read in JSON file
-    void openJson(File file){
+    public void openJson(File file){
         JSONParser parser = new JSONParser();
         try {
             //direct the parser to the file that is being read
@@ -43,7 +43,7 @@ public class ImportFile {
     }
 
     //reads in tsv and sets temp observable list to it's elements
-    void openTSV(File file){
+    public void openTSV(File file){
         try(BufferedReader bw = new BufferedReader(new FileReader(file))){
             bw.readLine(); //reads in the first line
             String line;
@@ -60,7 +60,7 @@ public class ImportFile {
     }
 
     //read in HTML file
-    void openHTML(File file){
+    public void openHTML(File file){
         Document doc;
         try {
             doc = Jsoup.parse(file, "UTF-8");

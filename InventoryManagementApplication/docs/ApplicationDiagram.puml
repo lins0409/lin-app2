@@ -1,50 +1,123 @@
 @startuml
 'https://plantuml.com/class-diagram
 
-class ApplicationController{
+ApplicationController <-- ExportFileFormats
+ApplicationController <-- ImportFile
+ApplicationController <-- InventoryItems
+ApplicationController <-- MoneyErrorController
+ApplicationController <-- NameErrorController
+ApplicationController <-- SerialErrorChecker
+SerialErrorChecker <-- SerialErrorController
+
++class ApplicationController{
+ --attributes--
  ObservableList <InventoryItems> inventoryItemsObservableList
- int limit = 256
- boolean searchFilter(InventoryItems item, String searchText)
- ObservableList<InventoryItems> filteredList(List<InventoryItems> list, String searchText)
- public void initialize(URL location, ResourceBundle resources)
- void addItem()
- void clearTable()
- void deleteItem()
- void editItem()
- void editName(CellEditEvent editCell)
- void editSerial(CellEditEvent editCell)
- void editVal(CellEditEvent editCell)
- void loadFile()
- void saveFile() throws IOException
- void setTable()
- void clearText()
+ -int limit = 256
+ -boolean searchFilter(InventoryItems item, String searchText)
+ -ObservableList<InventoryItems> filteredList(List<InventoryItems> list, String searchText)
+ -TableView<InventoryItems> inventoryTable
+ -TextField itemName
+ -TextField moneyValue;
+ -TextField searchBox;
+ -TableColumn<InventoryItems, String> nameColumn;
+ -TableColumn<InventoryItems, String> serialColumn;
+ -TextField serialNumber;
+ -TableColumn<InventoryItems, Double> valueColumn;
+
+ --methods--
+ +initialize(URL location, ResourceBundle resources)
+ +addItem()
+ +clearTable()
+ +deleteItem()
+ +editItem()
+ +editName(CellEditEvent editCell)
+ +editSerial(CellEditEvent editCell)
+ +editVal(CellEditEvent editCell)
+ +loadFile()
+ +saveFile() throws IOException
+ +setTable()
+ +clearText()
 }
 
-class ExportFileFormats{
++class ExportFileFormats{
+ --attributes--
+ +boolean pass
 
+ --methods--
+ +exportHTML(File file, ObservableList<InventoryItems> itemsList) throws IOException
+ +exportJSON(File file, ObservableList <InventoryItems> itemsList)
+ +exportTSV(File file, ObservableList <InventoryItems> itemsList)
+ +public boolean getResults()
 }
 
-class ImportFile{
++class ImportFile{
+ --attributes--
+ ObservableList <InventoryItems> itemsObList = FXCollections.observableArrayList()
 
+ --methods--
+ +openJson(File file)
+ +openTSV(File file)
+ +openHTML(File file)
+ +ObservableList<InventoryItems> getItemsObList()
 }
 
-class InventoryItems{
++class InventoryItems{
+ --attributes--
+ -String serialNum
+ -String itemName
+ -double itemValue
 
+ --methods--
+ +InventoryItems(String serialNum, String itemName, double itemValue)
+ +String getItemName()
+ +setItemName(String itemName)
+ +String getSerialNum()
+ +setSerialNum(String serialNum)
+ +double getItemValue()
+ +setItemValue(double itemValue)
 }
 
-class InventoryManagementApplication{
-
++class InventoryManagementApplication{
+ --methods--
+ +start(Stage primaryStage) throws Exception
+ +{static} main(String[] args)
 }
 
-class MoneyErrorController{
++class MoneyErrorController{
+ --attributes--
+ -Label errorMessage
+ +Label staticLabel
+ -Button okButton
 
+ --methods--
+ +closeErrorMessage()
+ +initialize(URL location, ResourceBundle resources)
 }
 
-class NameErrorController{
++class NameErrorController{
+ --attributes--
+ -Label errorMessage
+ +Label staticLabel
+ -Button okButton
 
+ --methods--
+ +closeErrorMessage()
+ +initialize(URL location, ResourceBundle resources)
+}
+
++class SerialErrorChecker{
+ --attributes--
+ +boolean serialErrors(String tempItem,ObservableList<InventoryItems> inventoryItemsObservableList)
 }
 
 class SerialErrorController{
+ --attributes--
+ -Label errorMessage
+ +Label staticLabel
+ -Button okButton
 
+ --methods--
+ +closeErrorMessage()
+ +initialize(URL location, ResourceBundle resources)
 }
 @enduml
