@@ -104,46 +104,19 @@ public class ApplicationController implements Initializable {
     void addItem() {
         //flags
         boolean serialClear = true, nameClear = true, valueClear = true;
-        //regex pattern to ensure that the pattern of the serial number is following the correct format
-        String pattern = "[a-zA-Z]-[a-zA-Z0-9]{3}-[a-zA-Z0-9]{3}-[a-zA-Z0-9]{3}";
+
+        //for the serial number partm so this function isn't insanely long
+        SerialErrorChecker errorHandler = new SerialErrorChecker();
 
         //create new instance of InventoryItems, make it get the stuff in the text field
         InventoryItems items = new InventoryItems(serialNumber.getText(), itemName.getText(), Double.parseDouble(moneyValue.getText()));
+
         //set a temp value to the new value for comparing
         String tempItem = serialNumber.getText();
+
         //if the entered value matches up with a previous value on the chart make an error message pop up
-        for (int i = 0; i < inventoryItemsObservableList.size(); i++){
-            for(int j = i; j < inventoryItemsObservableList.size(); j ++){
-                if(tempItem.equals(inventoryItemsObservableList.get(j).getSerialNum())){
-                    try {
-                        Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("SerialDuplicateErrorPopUp.fxml")));
-                        Stage stage = new Stage();
-                        stage.setTitle("Error");
-                        stage.setScene(new Scene(parent));
-                        stage.show();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    //set to false so item won't be added to table so user can go back and fix it
-                    serialClear = false;
-                }
-            }
-        }
-        //if the serial number does not match with the pattern A-XXX-XXX-XXX throw an error message
-        if(!Pattern.matches(pattern, tempItem)){
-            try {
-                Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("SerialInvalidFormatErrorPopUp.fxml")));
-                Stage stage = new Stage();
-                stage.setTitle("Error");
-                stage.setScene(new Scene(parent));
-                stage.show();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            //set to false so item won't be added to table so user can go back and fix it
-            serialClear = false;
-        }
-        //compares the serial number to the rest of the serial numbers in the table
+        serialClear = errorHandler.serialErrors(tempItem, inventoryItemsObservableList);
+
         //if the name of the item isn't long enough or if empty, make error message pop up
         if((itemName.getText().length() < 2) || (itemName.getText() == null)){
             try {
@@ -239,42 +212,13 @@ public class ApplicationController implements Initializable {
         //flag
         boolean validInput = true;
         //regex pattern for comparison
-        String pattern = "[a-zA-Z]-[a-zA-Z0-9]{3}-[a-zA-Z0-9]{3}-[a-zA-Z0-9]{3}";
         InventoryItems items = inventoryTable.getSelectionModel().getSelectedItem();
         //set the new input to a new string to be compared
         String tempItem = editCell.getNewValue().toString();
 
-        //if the entered value matches up with a previous value on the chart make an error message pop up
-        for (int i = 0; i < inventoryItemsObservableList.size(); i++){
-            for(int j = i; j < inventoryItemsObservableList.size(); j ++){
-                if(tempItem.equals(inventoryItemsObservableList.get(j).getSerialNum())){
-                    try {
-                        Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("SerialDuplicateErrorPopUp.fxml")));
-                        Stage stage = new Stage();
-                        stage.setTitle("Error");
-                        stage.setScene(new Scene(parent));
-                        stage.show();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    //set to false so item won't be added to table so user can go back and fix it
-                    validInput = false;
-                }
-            }
-        }
-        //checks to make sure that the serial number is in the format of the pattern
-        if((!Pattern.matches(pattern, editCell.getNewValue().toString()))){
-            try {
-                Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("SerialInvalidFormatErrorPopUp.fxml")));
-                Stage stage = new Stage();
-                stage.setTitle("Error");
-                stage.setScene(new Scene(parent));
-                stage.show();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            validInput = false;
-        }
+        SerialErrorChecker errorChecker = new SerialErrorChecker();
+        validInput = errorChecker.serialErrors(tempItem, inventoryItemsObservableList);
+
         //if no problems
         if (validInput){
             //update the old value with the new value
@@ -351,6 +295,8 @@ public class ApplicationController implements Initializable {
             }
             //get the new updated list of items
             inventoryTable.setItems(imp.getItemsObList());
+            //set all items in the uploaded list to the current list so you can keep adding to it
+            inventoryItemsObservableList.setAll(imp.getItemsObList());
         }
     }
 

@@ -1,9 +1,50 @@
 @startuml
 'https://plantuml.com/class-diagram
 
-class InventoryManagementApplication{
+class ApplicationController{
+ ObservableList <InventoryItems> inventoryItemsObservableList
+ int limit = 256
+ boolean searchFilter(InventoryItems item, String searchText)
+ ObservableList<InventoryItems> filteredList(List<InventoryItems> list, String searchText)
+ public void initialize(URL location, ResourceBundle resources)
+ void addItem()
+ void clearTable()
+ void deleteItem()
+ void editItem()
+ void editName(CellEditEvent editCell)
+ void editSerial(CellEditEvent editCell)
+ void editVal(CellEditEvent editCell)
+ void loadFile()
+ void saveFile() throws IOException
+ void setTable()
+ void clearText()
 }
 
-class ApplicationController{
+class ExportFileFormats{
+
+}
+
+class ImportFile{
+
+}
+
+class InventoryItems{
+
+}
+
+class InventoryManagementApplication{
+
+}
+
+class MoneyErrorController{
+
+}
+
+class NameErrorController{
+
+}
+
+class SerialErrorController{
+
 }
 @enduml
