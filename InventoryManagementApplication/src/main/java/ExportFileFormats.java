@@ -10,8 +10,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class ExportFileFormats{
-    //for test cases later, to make sure that the functions are passing everything in
-    public boolean pass;
 
     //export the inventory as an HTML file, end with .html
     public void exportHTML(File file, ObservableList<InventoryItems> itemsList) throws IOException {
@@ -41,7 +39,6 @@ public class ExportFileFormats{
         bw.write("\n</body>\n</html>");
         //close file/writer
         bw.close();
-        pass = true;
     }
 
     //export the inventory as a JSON file, end with .json
@@ -70,7 +67,6 @@ public class ExportFileFormats{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        pass = true;
     }
 
     //export the inventory as a TSV file, end with .txt
@@ -93,11 +89,5 @@ public class ExportFileFormats{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        pass = true;
-    }
-
-    //for test cases
-    public boolean getResults(){
-        return pass;
     }
 }
