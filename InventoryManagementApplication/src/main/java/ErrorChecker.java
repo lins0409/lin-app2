@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-public class SerialErrorChecker {
+public class ErrorChecker {
 
     public boolean serialErrors(String tempItem, ObservableList<InventoryItems> inventoryItemsObservableList){
         //regex pattern to ensure that the pattern of the serial number is following the correct format
@@ -57,4 +57,41 @@ public class SerialErrorChecker {
         return status;
     }
 
+
+    public boolean nameErrors(String itemName){
+        boolean status = true;
+        if((itemName.length() < 2) || (itemName == null)){
+            try {
+                Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("NameErrorPopUp.fxml")));
+                Stage stage = new Stage();
+                stage.setTitle("Error");
+                stage.setScene(new Scene(parent));
+                stage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //set to false so item won't be added to table
+            status = false;
+        }
+
+        return status;
+    }
+
+    public boolean valueErrors(double moneyValue){
+        boolean status = true;
+        if(moneyValue < 0){
+            try {
+                Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MoneyErrorPopUp.fxml")));
+                Stage stage = new Stage();
+                stage.setTitle("Error");
+                stage.setScene(new Scene(parent));
+                stage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //set bool to false so item won't be added to table
+            status = false;
+        }
+        return status;
+    }
 }

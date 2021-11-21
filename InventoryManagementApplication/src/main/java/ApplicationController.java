@@ -6,10 +6,7 @@
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
@@ -20,11 +17,13 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.converter.DoubleStringConverter;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 public class ApplicationController implements Initializable {
 
@@ -102,48 +101,27 @@ public class ApplicationController implements Initializable {
     @FXML
     void addItem() {
         //flags
-        boolean serialClear, nameClear = true, valueClear = true;
+        boolean serialClear, nameClear, valueClear;
 
-        //for the serial number partm so this function isn't insanely long
-        SerialErrorChecker errorHandler = new SerialErrorChecker();
+        //for the serial number part so this function isn't insanely long
+        ErrorChecker errorHandler = new ErrorChecker();
 
         //create new instance of InventoryItems, make it get the stuff in the text field
         InventoryItems items = new InventoryItems(serialNumber.getText(), itemName.getText(), Double.parseDouble(moneyValue.getText()));
 
         //set a temp value to the new value for comparing
         String tempItem = serialNumber.getText();
-
         //if the entered value matches up with a previous value on the chart make an error message pop up
         serialClear = errorHandler.serialErrors(tempItem, inventoryItemsObservableList);
 
         //if the name of the item isn't long enough or if empty, make error message pop up
-        if((itemName.getText().length() < 2) || (itemName.getText() == null)){
-            try {
-                Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("NameErrorPopUp.fxml")));
-                Stage stage = new Stage();
-                stage.setTitle("Error");
-                stage.setScene(new Scene(parent));
-                stage.show();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            //set to false so item won't be added to table
-            nameClear = false;
-        }
+        String tempName = itemName.getText();
+        nameClear = errorHandler.nameErrors(tempName);
+
         //if value that is entered is negative, make error message pop up
-        if(Double.parseDouble(moneyValue.getText()) < 0){
-            try {
-                Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MoneyErrorPopUp.fxml")));
-                Stage stage = new Stage();
-                stage.setTitle("Error");
-                stage.setScene(new Scene(parent));
-                stage.show();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            //set bool to false so item won't be added to table
-            valueClear = false;
-        }
+        double tempValue = Double.parseDouble(moneyValue.getText());
+        valueClear = errorHandler.valueErrors(tempValue);
+
         //set object to the tableview as long as there are no issues
         if (serialClear && nameClear && valueClear){
             inventoryItemsObservableList.add(items);
@@ -182,22 +160,14 @@ public class ApplicationController implements Initializable {
     @FXML
     public void editName(CellEditEvent editCell) {
         //flag
-        boolean validInput = true;
+        boolean validInput;
         InventoryItems items = inventoryTable.getSelectionModel().getSelectedItem();
+        String tempName = editCell.getNewValue().toString();
 
         //check to make sure that the new value is valid
-        if((editCell.getNewValue().toString().length() < 2) || (editCell.getNewValue().toString() == null)){
-            try {
-                Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("NameErrorPopUp.fxml")));
-                Stage stage = new Stage();
-                stage.setTitle("Error");
-                stage.setScene(new Scene(parent));
-                stage.show();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            validInput = false;
-        }
+        ErrorChecker errorChecker = new ErrorChecker();
+        validInput = errorChecker.nameErrors(tempName);
+
         //if there are no issues encountered
         if (validInput){
             //update table with new value
@@ -215,7 +185,7 @@ public class ApplicationController implements Initializable {
         //set the new input to a new string to be compared
         String tempItem = editCell.getNewValue().toString();
 
-        SerialErrorChecker errorChecker = new SerialErrorChecker();
+        ErrorChecker errorChecker = new ErrorChecker();
         validInput = errorChecker.serialErrors(tempItem, inventoryItemsObservableList);
 
         //if no problems
@@ -229,23 +199,14 @@ public class ApplicationController implements Initializable {
     @FXML
     public void editVal(CellEditEvent editCell) {
         //flag for error message
-        boolean validInput = true;
+        boolean validInput;
 
         InventoryItems items = inventoryTable.getSelectionModel().getSelectedItem();
         //check to make sure that value is valid
-        if(Double.parseDouble(editCell.getNewValue().toString()) < 0){
-            try {
-                Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MoneyErrorPopUp.fxml")));
-                Stage stage = new Stage();
-                stage.setTitle("Error");
-                stage.setScene(new Scene(parent));
-                stage.show();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            //set bool to false so item won't be added to table
-            validInput = false;
-        }
+        String tempValue = editCell.getNewValue().toString();
+
+        ErrorChecker errorChecker = new ErrorChecker();
+        validInput = errorChecker.valueErrors(Double.parseDouble(tempValue));
         //if there are no problems with the value
         if (validInput) {
             items.setItemValue(Double.parseDouble(editCell.getNewValue().toString()));
@@ -282,7 +243,6 @@ public class ApplicationController implements Initializable {
             //now that the file extension is found, if it's txt
             if(extension.equals("txt")){
                 imp.openTSV(f);
-                inventoryTable.setItems(inventoryItemsObservableList);
             }
             //if it's html
             if(extension.equals("html")){
@@ -294,7 +254,7 @@ public class ApplicationController implements Initializable {
             }
             //get the new updated list of items
             inventoryTable.setItems(imp.getItemsObList());
-            //set all items in the uploaded list to the current list so you can keep adding to it
+            //set all items in the uploaded list to the current list, makes it possible to keep adding to it
             inventoryItemsObservableList.setAll(imp.getItemsObList());
         }
     }
