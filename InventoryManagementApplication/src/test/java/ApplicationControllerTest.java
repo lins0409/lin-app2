@@ -1,5 +1,6 @@
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.TextField;
 import org.junit.jupiter.api.Test;
 
 import java.util.Random;
@@ -35,22 +36,50 @@ class ApplicationControllerTest {
         assertEquals(expected, actual);
     }
 
+    @Test
+    public void testAdd(){
+        ApplicationController applicationController = new ApplicationController();
+        InventoryItems items = new InventoryItems("S-845-8lu-oi8", "test", 111);
+
+        applicationController.addItemHelper(items);
+
+        assertEquals(1, applicationController.inventoryItemsObservableList.size());
+    }
+
     //test to see if the formatting is valid
     @Test
-    void serialFormatErrorTest(){
+    public void serialFormatErrorTest(){
         ErrorChecker ec = new ErrorChecker();
         String tempString = "A-254-iuh-999";
 
         //sec.serialErrors(tempString, tesInventory);
-        assertEquals(true, ec.serialErrors(tempString, tesInventory));
+        assertTrue(ec.serialErrors(tempString, tesInventory));
     }
 
     //test to see if the serial is a duplicate
     @Test
-    void serialDuplicateErrorTest(){
+    public void serialDuplicateErrorTest(){
         ErrorChecker ec = new ErrorChecker();
         String tempString = "A-123-456-789";
+        ec.serialErrors(tempString, tesInventory);
 
-        assertEquals(false, ec.serialErrors(tempString, tesInventory));
+        assertFalse(ec.serialErrors(tempString, tesInventory));
     }
+
+    @Test
+    public void nameErrorTest(){
+        ErrorChecker ec = new ErrorChecker();
+        String tempString = "b";
+
+        assertFalse(ec.nameErrors(tempString));
+    }
+
+    @Test
+    public void valueErrorTest(){
+        ErrorChecker ec = new ErrorChecker();
+        double tempString = -1;
+
+        assertFalse(ec.valueErrors(tempString));
+    }
+
 }

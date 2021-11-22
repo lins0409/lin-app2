@@ -98,6 +98,7 @@ public class ApplicationController implements Initializable {
     }
 
     //add items from text field into the chart
+    //didn't make test for it, involves interacting with javafx measurements
     @FXML
     void addItem() {
         //flags
@@ -124,7 +125,7 @@ public class ApplicationController implements Initializable {
 
         //set object to the tableview as long as there are no issues
         if (serialClear && nameClear && valueClear){
-            inventoryItemsObservableList.add(items);
+            addItemHelper(items);
             //set text field values to columns in the table
             inventoryTable.setItems(inventoryItemsObservableList);
             //auto clear text field
@@ -132,7 +133,13 @@ public class ApplicationController implements Initializable {
         }
     }
 
+    //helper function for addItems, separated, so I can test it
+    public void addItemHelper(InventoryItems items){
+        inventoryItemsObservableList.add(items);
+    }
+
     //get rid of all the items in the table
+    //interacts with the gui, didn't make a test case for it
     @FXML
     public void clearTable(){
         //clear all
@@ -140,6 +147,7 @@ public class ApplicationController implements Initializable {
     }
 
     //get rid of row
+    //didn't make a test function since it interacts with the gui
     @FXML
     public void deleteItem(){
         //grab index of element in the table that is selected
@@ -157,6 +165,7 @@ public class ApplicationController implements Initializable {
     }
 
     //on double click after the modify button has been pressed.
+    //didn't make test for it, involves interaction with the gui
     @FXML
     public void editName(CellEditEvent editCell) {
         //flag
@@ -176,6 +185,7 @@ public class ApplicationController implements Initializable {
     }
 
     //edit the serial value
+    //didn't make test for it, involves interaction with the gui
     @FXML
     public void editSerial(CellEditEvent editCell) {
         //flag
@@ -196,6 +206,7 @@ public class ApplicationController implements Initializable {
     }
 
     //when you double-click the value cell after you press the modify button
+    //didn't make test for it, involves interaction with the gui
     @FXML
     public void editVal(CellEditEvent editCell) {
         //flag for error message
@@ -214,6 +225,7 @@ public class ApplicationController implements Initializable {
     }
 
     //open a pre-made file
+    //made tests for the export functions
     @FXML
     public void loadFile() {
         //clear the values from the current list
@@ -260,6 +272,7 @@ public class ApplicationController implements Initializable {
     }
 
     //create a new file
+    //made tests for the export functions
     @FXML
     public void saveFile() throws IOException {
         //make an instance of FileChooser
@@ -301,6 +314,7 @@ public class ApplicationController implements Initializable {
     }
 
     //set the values on the table
+    //just a setter, didn't test it since it's a function created by default
     @FXML
     public void setTable() {
         //make the table uneditable

@@ -87,7 +87,7 @@ public class ImportFile {
         }
     }
 
-    //don't need to test because it is a getter
+    //don't need to test because it is a getter, default functions don't need to be tested
     public ObservableList<InventoryItems> getItemsObList(){
         return itemsObList;
     }

@@ -53,7 +53,6 @@ public class ErrorChecker {
             //set to false so item won't be added to table so user can go back and fix it
             status = false;
         }
-
         return status;
     }
 
@@ -73,7 +72,6 @@ public class ErrorChecker {
             //set to false so item won't be added to table
             status = false;
         }
-
         return status;
     }
 
